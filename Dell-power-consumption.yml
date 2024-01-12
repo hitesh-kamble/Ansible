@@ -1,0 +1,23 @@
+---
+- name: Get Dell Server Power Consumption
+  hosts: your_server
+  gather_facts: no  # Disable gathering facts to speed up the playbook
+ 
+  vars:
+    idrac_ip: "10.10.101.19"
+    idrac_username: "root"
+    idrac_password: "calvin"
+ 
+  tasks:
+    - name: Get Power Consumption Information
+      uri:
+        url: "https://{{ idrac_ip }}/redfish/v1/Chassis/System.Embedded.1/Power"
+        method: GET
+        user: "{{ idrac_username }}"
+        password: "{{ idrac_password }}"
+        validate_certs: no  # You may need to set this to 'yes' if your SSL/TLS certificates are valid
+      register: power_info
+ 
+    - name: Display Power Consumption Information
+      debug:
+        var: power_info.json.PowerControl.PowerConsumedWatts
